@@ -60,6 +60,7 @@ function keyPressed() {
     textSize(50);
     text('A for effort!', 150, 100);
   }
+  key='';
 }
 
 function keyReleased() {
