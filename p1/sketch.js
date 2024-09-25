@@ -75,3 +75,8 @@ function drawChoice() {
       break;
   }
 }
+
+function audrey(image, x, y, size, size);
+  c = random(150, 250);
+  tint(c, c, c, c);
+  size=random(2, 80);
