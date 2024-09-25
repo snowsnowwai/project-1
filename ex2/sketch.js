@@ -1,72 +1,99 @@
-let jade;
-let ash;
-let isKeyPressed = false;
+let jade, jade2, ash, ash2, yum;
+let x, y;
+let grid;
+let yumX, yumY;
+let score = 0;
+let showYum = true;
+let currentImage;
 
 function preload() {
-  jade = loadImage("jade.jpg");
-  ash = loadImage("ash.jpg");
+  jade = loadImage("jade.png");
+  jade2 = loadImage("jade2.png");
+  ash = loadImage("ash.png");
+  ash2 = loadImage("ash2.png");
+  yum = loadImage("yum.png");
+  font = loadFont('Tiny5/Tiny5-Regular.ttf');
 }
 
 function setup() {
-  createCanvas(500,500);
-  background(20);
-  fill(255);
+  createCanvas(1000, 1000);
+  x = width / 4;
+  y = height / 4;
+  grid = 75;
+  currentImage = jade;
+  spawnYum();
+  textFont(font);
+  textSize(50);
 }
 
 function draw() {
-  if (!mouseIsPressed) {
-    noTint();
-    image(jade, 0, 0, width/2, height/2);
-    image(ash, width/2, height/2, width/2, height/2);
-  } 
-  if (mouseIsPressed) {
-    noTint();
-    image(ash, 0, height/2, width/2, height/2);
-    image(jade, 250, 0, width/2, height/2);
+  background(20);
+  
+  if (showYum) {
+    t = random(50, 255);
+    tint(t, t, t, t);
+    image(yum, yumX, yumY, grid, grid);
   }
 
   noTint();
-  rect(mouseX, mouseY, 100, 100);
+  image(currentImage, x, y, grid, grid);
 
-  if(keyIsPressed) {
-    keyPressed();
-  }
-}
+  if (keyIsPressed) {
+    drawChoice();
+  } 
 
-function mouseMoved() {
-  if (mouseX < width / 2) {
-    let size=random(10, 50);
-    image(jade, 100, 100, size, size);
-  }
-  else {
-    let size=random(10, 50);
-    image(ash, 100, 100, size, size);
-  }
-}
+  checkTouch();
 
-function mousePressed () {
   fill(125, 99, 121);
-  ellipse(mouseX, mouseY, 50, 50);
+  text(`Score: ${score}`, 50, 100);
 }
+  
+function drawChoice() {
+  let currentKey = key;
 
-function keyPressed() {
-  if (key === 'w' || 'W') {
-    fill(100, 100, 155);
-    rect (width/2, height/2, 150, 150);
-    textSize(50);
-    text('Well done!', 200, 200);
-  } else {
-    fill(195, 187, 194);
-    textSize(50);
-    text('A for effort!', 150, 100);
+  switch(currentKey) {
+    case 'w':
+      console.log("up");
+      y = max(0, y - grid);
+      currentImage = jade;
+      break;
+    case 'a':
+      console.log("left");
+      x = max(0, x - grid);
+      currentImage = ash;
+      break;
+    case 's':
+      console.log("down");
+      y = min(height - grid, y + grid);
+      currentImage = jade2;
+      break;
+    case 'd':
+      console.log("right");
+      x = min(width - grid, x + grid);
+      currentImage = ash2;
+      break;
   }
-  key='';
+  key = '';
 }
 
-function keyReleased() {
-  isKeyPressed = false;
+function spawnYum() {
+  yumX = floor(random(width / grid)) * grid;
+  yumY = floor(random(height / grid)) * grid;
+  showYum = true;
 }
 
-function mouseReleased() {
-  mouseIsPressed = false;
+function checkTouch() {
+  if (showYum && dist(x, y, yumX, yumY) < grid / 2) {
+    console.log("Yum!");
+    showYum = false;
+    score++;
+
+    fill(255, 255, 0);
+    fill(125, 99, 121);
+    textFont(font);
+    textSize(50);
+    text("YUM!", width / 2 - 50, height / 2 - 50);
+
+    setTimeout(spawnYum, 1000);
+  }
 }
